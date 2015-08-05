@@ -1,5 +1,5 @@
 # ProxyFactory
 
-A toolkit for building flexibles, easily customizables HTTP proxies in PHP
+A toolkit for building flexible, easily customizable HTTP proxies in PHP
 
 ![Illustration of a proxy factory](pf.png)
