@@ -16,7 +16,7 @@ abstract class Proxy_TestCase extends Http_TestCase
 
     protected function configure(Closure $closure)
     {
-        $this->configurationFunctionSource = '.' . $this->getClosureSource($closure);
+        $this->configurationFunctionSource = $this->getClosureSource($closure);
         return $this;
     }
 
@@ -36,7 +36,7 @@ EOT;
             $routerSource .= "\$configure = (";
             $routerSource .= $this->configurationFunctionSource;
             $routerSource .= "\n";
-            $routerSource .= "\$configure(\$gateway)\n";
+            $routerSource .= "\$configure(\$gateway);\n";
         }
 
         if (isset($this->cassette)) {
