@@ -2,7 +2,12 @@
 
 use GuzzleHttp\Client;
 
-abstract class WebTest extends \PHPUnit_Framework_TestCase {
+/**
+ * Class Http_TestCase test case that fires the PHP builtin server for performing HTTP tests.
+ *
+ * Inspired and adapted from http://tech.vg.no/2013/08/16/using-phps-built-in-web-server-in-behat-tests/
+ */
+abstract class Http_TestCase extends \PHPUnit_Framework_TestCase {
 
     protected $pid;
 

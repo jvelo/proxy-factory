@@ -1,6 +1,6 @@
 <?php
 
-abstract class ConfiguredServerWebTest extends WebTest
+abstract class Proxy_TestCase extends Http_TestCase
 {
     protected $routerFileName;
 
