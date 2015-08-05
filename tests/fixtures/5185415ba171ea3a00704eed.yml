@@ -1,0 +1,24 @@
+
+-
+    request:
+        method: GET
+        url: 'http://www.mocky.io/v2/5185415ba171ea3a00704eed'
+        headers:
+            Host: www.mocky.io
+            Accept-Encoding: null
+            user-agent: 'GuzzleHttp/6.0.2 curl/7.37.1 PHP/5.6.8'
+            host: www.mocky.io
+            Accept: null
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: OK
+        headers:
+            Server: Cowboy
+            Date: 'Wed, 05 Aug 2015 20:53:10 GMT'
+            Connection: keep-alive
+            Content-Type: 'application/json; charset=utf-8'
+            Content-Length: '18'
+            Via: '1.1 vegur'
+        body: '{"hello": "world"}'

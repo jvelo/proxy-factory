@@ -155,6 +155,15 @@ class ProxyFactory {
             ->withUri($proxiedUri)
             ->withHeader("host", $this->proxyUri->getHost());
 
+        if ($proxiedRequest->getBody()->getSize() === null) {
+            // FIXME
+            // Prevents an incompatibility with PHP-VCR :
+            // Without this the stream size is null and not 0 so CurlFactory#applyBody is applied and it sets a
+            // CURLOPT_READFUNCTION on the request, but not a CURLOPT_INFILESIZE ; which makes VCR fails.
+            // See https://github.com/guzzle/guzzle/commit/0a3065ea4639c1df8b9220bc8ca3fb529d7f8b52#commitcomment-12551295
+            $proxiedRequest = $proxiedRequest->withBody(\GuzzleHttp\Psr7\stream_for());
+        }
+
         return $proxiedRequest;
     }
 
