@@ -91,7 +91,6 @@ abstract class WebTest extends \PHPUnit_Framework_TestCase {
             $this->root,
             $this->router
         );
-        error_log($command);
         $output = array();
         exec($command, $output);
         return (int) $output[0];
