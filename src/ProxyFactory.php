@@ -118,7 +118,7 @@ class ProxyFactory {
             }
 
         } catch (ConnectException $e) {
-            throw new RuntimeException("Failed to connect to end-point", $e);
+            throw new \RuntimeException("Failed to connect to end-point", $e);
         }
 
         $symfonyResponse = $this->bridge->createResponse($response);
