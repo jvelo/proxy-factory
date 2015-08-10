@@ -19,21 +19,6 @@ use Zend\Diactoros\Uri;
 class ProxyFactory {
 
     /**
-     * @var RouteCollection additional routes this proxy handles
-     */
-    protected $routes;
-
-    /**
-     * @var Routing\RequestContext the request context of this proxy request execution
-     */
-    protected $context;
-
-    /**
-     * @var HttpKernel\Controller\ControllerResolverInterface the resolver used by this proxy
-     */
-    protected $resolver;
-
-    /**
      * @var Request
      */
     protected $symfonyRequest;
@@ -86,11 +71,6 @@ class ProxyFactory {
             $this->routes = $arguments['routes'];
         }
 
-        // FIXME externalize those in an additional symfony routing extension
-        $this->context = new Routing\RequestContext();
-        $this->matcher = new Routing\Matcher\UrlMatcher($this->routes, $this->context);
-        $this->resolver = new HttpKernel\Controller\ControllerResolver();
-
         $this->bridge = new HttpFoundationFactory();
         $this->psr7Factory = new DiactorosFactory();
 
@@ -142,11 +122,6 @@ class ProxyFactory {
             return $transformed;
         }, $this->request);
 
-        error_log($this->request->getHeaderLine("X-Forwarded-For"));
-
-        // FIXME externalize those in an additional symfony routing extension
-        $this->symfonyRequest = $this->bridge->createRequest($this->request);
-        $this->context->fromRequest($this->symfonyRequest);
 
         $proxiedRequest = $this->convertToProxiedRequest();
 
