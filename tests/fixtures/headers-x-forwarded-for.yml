@@ -1,0 +1,26 @@
+
+-
+    request:
+        method: GET
+        url: 'http://httpbin.org/headers?show_env=1'
+        headers:
+            Host: httpbin.org
+            Accept-Encoding: null
+            user-agent: Http_TestCase/1.0
+            host: httpbin.org
+            X-Forwarded-For: 127.0.0.1
+            Accept: null
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: OK
+        headers:
+            Server: nginx
+            Date: 'Mon, 10 Aug 2015 21:07:43 GMT'
+            Content-Type: application/json
+            Content-Length: '210'
+            Connection: keep-alive
+            Access-Control-Allow-Origin: '*'
+            Access-Control-Allow-Credentials: 'true'
+        body: "{\n  \"headers\": {\n    \"Host\": \"httpbin.org\", \n    \"Runscope-Service\": \"httpbin\", \n    \"User-Agent\": \"Http_TestCase/1.0\", \n    \"X-Forwarded-For\": \"127.0.0.1, 90.59.30.129\", \n    \"X-Real-Ip\": \"90.59.30.129\"\n  }\n}\n"

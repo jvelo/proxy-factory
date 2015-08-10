@@ -59,6 +59,16 @@ class ProxyFactory {
     protected $proxyUri;
 
     /**
+     * @var bool whether or not to add the X-Forwarded-For header
+     */
+    protected $addXForwardedFor = true;
+
+    /**
+     * @var array
+     */
+    protected $requestFilters = array();
+
+    /**
      * @param string $uri
      * @param array $arguments
      * @throws RuntimeException
@@ -76,6 +86,7 @@ class ProxyFactory {
             $this->routes = $arguments['routes'];
         }
 
+        // FIXME externalize those in an additional symfony routing extension
         $this->context = new Routing\RequestContext();
         $this->matcher = new Routing\Matcher\UrlMatcher($this->routes, $this->context);
         $this->resolver = new HttpKernel\Controller\ControllerResolver();
@@ -87,18 +98,54 @@ class ProxyFactory {
     }
 
     /**
+     * @param $uri the URI to (reverse) proxy to
+     * @return $this this proxy factory
+     */
+    public function withUri($uri) {
+        $this->proxyUri = $uri;
+        return $this;
+    }
+
+    public function withoutXForwardedFor() {
+        $this->addXForwardedFor = false;
+        return $this;
+    }
+
+    public function addRequestFilter(callable $filter) {
+        $this->requestFilters[]= $filter;
+        return $this;
+    }
+
+    /**
      * @param RequestInterface|ServerRequestInterface $request
      * @throws RuntimeException
      */
     function handleRequest(ServerRequestInterface $request = null) {
+
+        if ($this->addXForwardedFor) {
+            $this->addRequestFilter(new XForwardedForRequestFilter());
+        }
+
         if ($request == null) {
             $this->symfonyRequest = Request::createFromGlobals();
             $this->request = $this->psr7Factory->createRequest($this->symfonyRequest);
         } else {
             $this->request = $request;
-            $this->symfonyRequest = $this->bridge->createRequest($this->request);
+
         }
 
+        $this->request = array_reduce($this->requestFilters, function($request, callable $filter){
+            $transformed = $filter($request);
+            if (!$transformed instanceof ServerRequestInterface) {
+                throw new \LogicException("Request filter does not return a request");
+            }
+            return $transformed;
+        }, $this->request);
+
+        error_log($this->request->getHeaderLine("X-Forwarded-For"));
+
+        // FIXME externalize those in an additional symfony routing extension
+        $this->symfonyRequest = $this->bridge->createRequest($this->request);
         $this->context->fromRequest($this->symfonyRequest);
 
         $proxiedRequest = $this->convertToProxiedRequest();

@@ -21,6 +21,8 @@ abstract class Http_TestCase extends \PHPUnit_Framework_TestCase {
 
     protected $httpClientConfiguration = array();
 
+    protected $started = false;
+
     /**
      * @param $url
      * @return Psr\Http\Message\ResponseInterface;
@@ -77,7 +79,9 @@ abstract class Http_TestCase extends \PHPUnit_Framework_TestCase {
 
     protected function tearDown()
     {
-        $this->killProcess($this->pid);
+        if (isset($this->pid)) {
+            $this->killProcess($this->pid);
+        }
     }
 
     /**

@@ -29,7 +29,7 @@ require 'vendor/autoload.php';
 
 use VCR\VCR;
 
-$gateway = new \ProxyFactory\ProxyFactory("http://www.mocky.io/v2/");
+$gateway = new \ProxyFactory\ProxyFactory("http://httpbin.org/");
 
 EOT;
         if (isset($this->configurationFunctionSource)) {
