@@ -19,6 +19,8 @@ abstract class Http_TestCase extends \PHPUnit_Framework_TestCase {
 
     protected $router = null;
 
+    protected $httpClientConfiguration = array();
+
     /**
      * @param $url
      * @return Psr\Http\Message\ResponseInterface;
@@ -29,10 +31,13 @@ abstract class Http_TestCase extends \PHPUnit_Framework_TestCase {
 
     protected function getHttpClient() {
         $base_uri = "http://{$this->host}:{$this->port}";
-        return new Client([
+        return new Client(array_merge([
             'base_uri' => $base_uri,
             'timeout'  => 1.0,
-        ]);
+            'headers' => [
+                'User-Agent' => 'Http_TestCase/1.0'
+            ]
+        ], $this->httpClientConfiguration));
     }
 
     protected function withRouter ($router) {
