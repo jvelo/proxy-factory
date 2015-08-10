@@ -155,7 +155,8 @@ class ProxyFactory {
             ->withUri($proxiedUri)
             ->withHeader("host", $this->proxyUri->getHost());
 
-        if ($proxiedRequest->getBody()->getSize() === null) {
+        if ($proxiedRequest->getBody()->getSize() === null
+            && $proxiedRequest->getHeaderLine("User-Agent") == "Http_TestCase/1.0") {
             // FIXME
             // Prevents an incompatibility with PHP-VCR :
             // Without this the stream size is null and not 0 so CurlFactory#applyBody is applied and it sets a
