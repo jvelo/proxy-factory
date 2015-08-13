@@ -49,9 +49,19 @@ class ProxyFactory {
     protected $addXForwardedFor = true;
 
     /**
+     * @var array the headers to strip from the proxied response
+     */
+    protected $stripHeaders = array("Connection", "Content-Length");
+
+    /**
      * @var array
      */
     protected $requestFilters = array();
+
+    /**
+     * @var array
+     */
+    protected $responseFilters = array();
 
     /**
      * @param string $uri
@@ -96,6 +106,11 @@ class ProxyFactory {
         return $this;
     }
 
+    public function addResponseFilter(callable $filter) {
+        $this->responseFilters[]= $filter;
+        return $this;
+    }
+
     /**
      * @param RequestInterface|ServerRequestInterface $request
      * @throws RuntimeException
@@ -111,7 +126,6 @@ class ProxyFactory {
             $this->request = $this->psr7Factory->createRequest($this->symfonyRequest);
         } else {
             $this->request = $request;
-
         }
 
         $this->request = array_reduce($this->requestFilters, function($request, callable $filter){
@@ -143,7 +157,21 @@ class ProxyFactory {
             throw new \RuntimeException("Failed to connect to end-point", $e);
         }
 
+        $response = array_reduce($this->responseFilters, function(ResponseInterface $response, callable $filter){
+            $transformed = $filter($this->request, $response);
+            if (!$transformed instanceof ResponseInterface) {
+                throw new \LogicException("Response filter does not a response");
+            }
+            return $transformed;
+        }, $response);
+
+        $response = array_reduce($this->stripHeaders, function(ResponseInterface $response, $header) {
+            return $response->withoutHeader($header);
+        }, $response);
+
         $symfonyResponse = $this->bridge->createResponse($response);
+        $symfonyResponse->prepare($this->symfonyRequest);
+
         $symfonyResponse->send();
     }
 

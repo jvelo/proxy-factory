@@ -24,7 +24,7 @@ class XForwardedForRequestFilter
         }
 
         $forwardedFor[]= $_SERVER['REMOTE_ADDR'];
-        
+
         return $request->withHeader("X-Forwarded-For", implode(",", $forwardedFor));
     }
 
